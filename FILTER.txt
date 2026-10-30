@@ -1,0 +1,287 @@
+Degree
+ClrHome
+seq(0,K,1,12)→L₄
+"ZS SER R ZS SER L ZS SER C ZS PAR R ZS PAR L ZS PAR C ZP SER R ZP SER L ZP SER C ZP PAR R ZP PAR L ZP PAR C "→Str3
+Goto C
+Lbl QT
+ClrHome
+Stop
+Lbl C
+L₄(1)→A
+L₄(2)→B
+L₄(3)→C
+L₄(4)→D
+L₄(5)→E
+L₄(6)→F
+L₄(7)→G
+L₄(8)→H
+L₄(9)→I
+L₄(10)→J
+L₄(11)→L
+L₄(12)→M
+Menu("FILTER","1 SERIES ARM ZS",Z1,"2 SHUNT ARM ZP",Z2,"3 VIEW/EDIT",VW,"4 FORMULA",FM,"5 RUN",GO,"6 QUIT",QT)
+Lbl Z1
+1→V
+6→R
+1→Z
+Goto EN
+Lbl Z2
+7→V
+6→R
+1→Z
+Goto EN
+Lbl E1
+1→V
+3→R
+2→Z
+Goto EN
+Lbl E2
+4→V
+3→R
+2→Z
+Goto EN
+Lbl E3
+7→V
+3→R
+2→Z
+Goto EN
+Lbl E4
+10→V
+3→R
+2→Z
+Goto EN
+Lbl EN
+For(X,V,V+R-1)
+ClrHome
+Disp "FILTER V2"
+Disp sub(Str3,9*(X-1)+1,9)
+Disp "E.G. 10K 1UF 1NH","0 IF ABSENT"
+Input "",Str1
+length(Str1)→P
+1→Q
+If P>0:Then
+If (sub(Str1,P,1)="F")+(sub(Str1,P,1)="H"):P-1→P
+End
+If P>2:Then
+If sub(Str1,P-2,3)="MEG":Then
+10^6→Q
+P-3→P
+End
+End
+If Q=1:Then
+If P>0:Then
+inString("PNUM.K.GT",sub(Str1,P,1))→W
+If W>0:Then
+10^(3*(W-5))→Q
+P-1→P
+End
+End
+End
+0→W
+If P>0:expr(sub(Str1,1,P))*Q→W
+W→L₄(X)
+End
+If Z=1:Goto C
+Goto VW
+Lbl VW
+ClrHome
+Disp "ZS SER R L C",L₄(1),L₄(2),L₄(3)
+Disp "ZS PAR R L C",L₄(4),L₄(5),L₄(6)
+Pause 
+ClrHome
+Disp "ZP SER R L C",L₄(7),L₄(8),L₄(9)
+Disp "ZP PAR R L C",L₄(10),L₄(11),L₄(12)
+Pause 
+Menu("EDIT","ZS SERIES",E1,"ZS PARALLEL",E2,"ZP SERIES",E3,"ZP PARALLEL",E4,"BACK",C)
+Lbl FM
+ClrHome
+Disp "H=ZP/(ZS+ZP)"
+Disp "VIN-ZS-VOUT-ZP-GND"
+Disp "W=2*PI*F,J=SQRT(-1)"
+Disp "ZS=ZSER+ZPAR"
+Disp "ZSER=R+JWL+1/(JWC)"
+Disp "ZPAR=1/(1/R+1/(JWL)+JWC)"
+Disp "ZP: SAME FORM"
+Disp "MAG=ABS(H)"
+Disp "DB=20LOG(MAG)"
+Disp "DEG=ANGLE(H)"
+Pause 
+ClrHome
+(A>0)*(M>0)*(B+C+D+E+F+G+H+I+J+L=0)→Q
+(C>0)*(J>0)*(A+B+D+E+F+G+H+I+L+M=0)→W
+(A>0)*(L>0)*(B+C+D+E+F+G+H+I+J+M=0)→X
+(B>0)*(J>0)*(A+C+D+E+F+G+H+I+L+M=0)→Z
+If Q:Disp "RC LOWPASS","FC=1/(2PI R C)",1/(2π*A*M)
+If W:Disp "RC HIGHPASS","FC=1/(2PI R C)",1/(2π*C*J)
+If X:Disp "RL LOWPASS","FC=R/(2PI L)",A/(2π*L)
+If Z:Disp "RL HIGHPASS","FC=R/(2PI L)",J/(2π*B)
+If Q+W+X+Z=0:Disp "NO SPECIAL FORM"
+Pause 
+Goto C
+Lbl GO
+√(0-1)→Y
+Menu("MODE","SINGLE FREQ",S,"BODE PLOT",P,"BACK",C)
+Lbl S
+Input "FREQ HZ:",S
+{log(S),log(S)}→L₁
+2→N
+99→O
+Goto R
+Lbl P
+seq(0,K,1,16)→L₅
+(A*C>0)/(2π(A*C+(A*C=0)))→L₅(1)
+(D*F>0)/(2π(D*F+(D*F=0)))→L₅(2)
+(G*I>0)/(2π(G*I+(G*I=0)))→L₅(3)
+(J*M>0)/(2π(J*M+(J*M=0)))→L₅(4)
+(A*B>0)*A/(2π(B+(B=0)))→L₅(5)
+(D*E>0)*D/(2π(E+(E=0)))→L₅(6)
+(G*H>0)*G/(2π(H+(H=0)))→L₅(7)
+(J*L>0)*J/(2π(L+(L=0)))→L₅(8)
+(B*C>0)/(2π√(B*C+(B*C=0)))→L₅(9)
+(E*F>0)/(2π√(E*F+(E*F=0)))→L₅(10)
+(H*I>0)/(2π√(H*I+(H*I=0)))→L₅(11)
+(L*M>0)/(2π√(L*M+(L*M=0)))→L₅(12)
+((A+D)*(I+M)>0)/(2π((A+D)*(I+M)+((A+D)*(I+M)=0)))→L₅(13)
+((G+J)*(C+F)>0)/(2π((G+J)*(C+F)+((G+J)*(C+F)=0)))→L₅(14)
+((A+D)*(H+L)>0)*(A+D)/(2π((H+L)+((H+L)=0)))→L₅(15)
+((G+J)*(B+E)>0)*(G+J)/(2π((B+E)+((B+E)=0)))→L₅(16)
+L₅*(L₅<10^15)→L₅
+max(L₅)→U
+0→S
+If U>0:min(L₅+10^99*(L₅=0))→S
+ClrHome
+If U>0:Then
+Disp "KEY FREQS HZ:","LOW",round(S,3),"HIGH",round(U,0)
+Else
+Disp "NO CORNER FOUND"
+End
+Pause 
+Menu("BODE RANGE","AUTO RANGE",AU,"MANUAL",MA)
+Lbl AU
+If U=0:Then
+1→S
+10^5→U
+Else
+S/100→S
+U*100→U
+End
+min(300,iPart(50*log(U/S))+1)→N
+ClrHome
+Disp "START HZ",S,"STOP HZ",U,"POINTS",N
+Pause 
+Goto B2
+Lbl MA
+Input "START HZ (<FC/10):",S
+Input "STOP HZ (>10*FC):",U
+Input "POINTS (100-300):",N
+Lbl B2
+(log(U)-log(S))/(N-1)→O
+seq(log(S)+O*(K-1),K,1,N)→L₁
+Lbl R
+2π*10^L₁→L₂
+A+Y*L₂*B→L₃
+If C:L₃+1/(Y*L₂*C)→L₃
+0*L₂→L₅
+If D:1/D+L₅→L₅
+If E:L₅+1/(Y*L₂*E)→L₅
+L₅+Y*L₂*F→L₅
+If D+E+F:L₃+1/L₅→L₃
+G+Y*L₂*H→L₆
+If I:L₆+1/(Y*L₂*I)→L₆
+0*L₂→L₅
+If J:1/J+L₅→L₅
+If L:L₅+1/(Y*L₂*L)→L₅
+L₅+Y*L₂*M→L₅
+If J+L+M:L₆+1/L₅→L₆
+L₆/(L₃+L₆)→L₆
+20log(abs(L₆))→L₂
+angle(L₆)→L₃
+seq(L₃(K)-L₃(K-1),K,2,N)→L₅
+If max(abs(L₅))>180:Then
+L₃(1)→X
+For(K,2,N)
+L₃(K)→R
+While R-X>180
+R-360→R
+End
+While R-X<0-180
+R+360→R
+End
+R→L₃(K)
+R→X
+End
+End
+If O=99:Then
+ClrHome
+Disp "GAIN=",abs(L₆(1))
+Disp "DB=",L₂(1)
+Disp "DEG=",L₃(1)
+Stop
+End
+max(L₂)→Q
+If L₂(1)<Q-3:Then
+seq(K*(L₂(K)>Q-3),K,1,N)→L₅
+Else
+seq(K*(L₂(K)<Q-3),K,1,N)→L₅
+End
+min(L₅+10^9*(L₅=0))→F
+If F>N:0→F
+L₂(1)→G
+L₂(N)→H
+L₃(1)→I
+L₃(N)→L
+0→M
+If F>0:10^L₁(F)→M
+For(J,1,2)
+If J=2:Then
+L₃→L₂
+End
+min(L₂)→A
+max(L₂)→B
+If B-A<1:Then
+B+1→B
+A-1→A
+End
+(B-A)/8→C
+A-C→A
+B+C→B
+10^(iPart(log(B-A)))→D
+If (B-A)/D<4:D/2→D
+L₁(1)→Xmin
+L₁(N)→Xmax
+1→Xscl
+A→Ymin
+B→Ymax
+D→Yscl
+PlotsOff 
+FnOff 
+DispGraph
+TextColor(14)
+For(K,0-int(0-Xmin),int(Xmax))
+Vertical K,22
+Text(140,max(0,min(225,int((K-Xmin)/(Xmax-Xmin)*265)-10)),"10^",K)
+End
+If J=1:Horizontal Q-3,15
+For(K,1,N-1)
+Line(L₁(K),L₂(K),L₁(K+1),L₂(K+1))
+End
+TextColor(11)
+If J=1:Text(2,2,"MAG DB")
+If J=2:Text(2,2,"PHASE DEG")
+Text(14,2,"MAX=",round(max(L₂),2))
+Text(26,2,"MIN=",round(min(L₂),2))
+If F>0:Then
+Vertical L₁(F),13
+TextColor(13)
+Text(38,2,"F3DB=",round(M,2))
+End
+Pause 
+End
+PlotsOff 
+TextColor(12)
+ClrHome
+Disp "DB START,END",round(G,2),round(H,2)
+Disp "DEG START,END",round(I,2),round(L,2)
+Sci
+Disp "F3DB HZ",M
+Normal
